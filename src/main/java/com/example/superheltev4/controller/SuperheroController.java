@@ -27,11 +27,9 @@ public class SuperheroController {
         superheltRepository = (ISuperheltRepository) context.getBean(impl);
     }
 
-    SuperheroRepository_DB superheroRepository_DB = new SuperheroRepository_DB();
-
     @GetMapping("")
     public ResponseEntity<List<Superhero>> getAllSuperheroes() {
-        List<Superhero> superheroList = superheroRepository_DB.getAllSuperheroes();
+        List<Superhero> superheroList = superheltRepository.getAllSuperheroes();
         return new ResponseEntity<>(superheroList, HttpStatus.OK);
     }
 
@@ -40,7 +38,7 @@ public class SuperheroController {
 
     @GetMapping("/{navn}")
     public ResponseEntity<List<Superhero>> getSuperhero(@PathVariable String navn) {
-        List<Superhero> superheroList = superheroRepository_DB.getSuperheroByName(navn);
+        List<Superhero> superheroList = superheltRepository.getSuperheroByName(navn);
         return new ResponseEntity<>(superheroList, HttpStatus.OK);
     }
 
@@ -48,14 +46,14 @@ public class SuperheroController {
     //heroName, realName og antallet af superkræfter (Superpower)
     @GetMapping("/superpower/count")
     public ResponseEntity<List<HeroPowerCountDTO>> getSuperheroes_num_powers(){
-        List<HeroPowerCountDTO> superheroList = superheroRepository_DB.getSuperheroesWithNumPowers();
+        List<HeroPowerCountDTO> superheroList = superheltRepository.getSuperheroesWithNumPowers();
         return new ResponseEntity<>(superheroList, HttpStatus.OK);
     }
 
     //Med navn
     @GetMapping("/superpower/count/{navn}")
     public ResponseEntity<List<HeroPowerCountDTO>> getSuperheroes_num_powers(@PathVariable String navn){
-        List<HeroPowerCountDTO> superheroList = superheroRepository_DB.getSuperheroesWithNumPowersID(navn);
+        List<HeroPowerCountDTO> superheroList = superheltRepository.getSuperheroesWithNumPowersID(navn);
         return new ResponseEntity<>(superheroList, HttpStatus.OK);
     }
 
@@ -63,26 +61,26 @@ public class SuperheroController {
     //heroName, realName, superkræfter (Superpower)
     @GetMapping("/superpower")
     public ResponseEntity<List<HeroPowerDTO>> getSuperheroes(){
-        List<HeroPowerDTO> superheroList = superheroRepository_DB.getSuperheroesWithPowers();
+        List<HeroPowerDTO> superheroList = superheltRepository.getSuperheroesWithPowers();
         return new ResponseEntity<>(superheroList, HttpStatus.OK);
     }
 
     // Med navn
     @GetMapping("/superpower/{navn}")
     public ResponseEntity<List<HeroPowerDTO>> getSuperheroesID(@PathVariable String navn){
-        List<HeroPowerDTO> superheroList = superheroRepository_DB.getSuperheroesWithPowersID(navn);
+        List<HeroPowerDTO> superheroList = superheltRepository.getSuperheroesWithPowersID(navn);
         return new ResponseEntity<>(superheroList, HttpStatus.OK);
     }
 
     @GetMapping("/city")
     public ResponseEntity<List<HeroCityDTO>> getSuperheroesWithCity(){
-        List<HeroCityDTO> superheroList = superheroRepository_DB.getSuperheroesWithCity();
+        List<HeroCityDTO> superheroList = superheltRepository.getSuperheroesWithCity();
         return new ResponseEntity<>(superheroList, HttpStatus.OK);
     }
 
     @GetMapping("/city/{navn}")
     public ResponseEntity<List<HeroCityDTO>> getSuperheroesWithCityID(@PathVariable String navn){
-        List<HeroCityDTO> superheroList = superheroRepository_DB.getSuperheroWithCityID(navn);
+        List<HeroCityDTO> superheroList = superheltRepository   .getSuperheroWithCityID(navn);
         return new ResponseEntity<>(superheroList, HttpStatus.OK);
     }
 }
