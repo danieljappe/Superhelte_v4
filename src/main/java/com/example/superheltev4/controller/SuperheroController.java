@@ -4,7 +4,10 @@ import com.example.superheltev4.dto.HeroCityDTO;
 import com.example.superheltev4.dto.HeroPowerCountDTO;
 import com.example.superheltev4.dto.HeroPowerDTO;
 import com.example.superheltev4.model.Superhero;
+import com.example.superheltev4.repository.ISuperheltRepository;
 import com.example.superheltev4.repository.SuperheroRepository_DB;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,6 +20,13 @@ import java.util.List;
 @Controller
 @RequestMapping ("superhelte")
 public class SuperheroController {
+
+    ISuperheltRepository superheltRepository;
+
+    public SuperheroController(ApplicationContext context, @Value("${superhero.repository.impl}") String impl){
+        superheltRepository = (ISuperheltRepository) context.getBean(impl);
+    }
+
     SuperheroRepository_DB superheroRepository_DB = new SuperheroRepository_DB();
 
     @GetMapping("")
@@ -30,7 +40,7 @@ public class SuperheroController {
 
     @GetMapping("/{navn}")
     public ResponseEntity<List<Superhero>> getSuperhero(@PathVariable String navn) {
-        List<Superhero> superheroList = superheroRepository_DB.getSuperhero(navn);
+        List<Superhero> superheroList = superheroRepository_DB.getSuperheroByName(navn);
         return new ResponseEntity<>(superheroList, HttpStatus.OK);
     }
 

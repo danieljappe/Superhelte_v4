@@ -4,17 +4,14 @@ import com.example.superheltev4.dto.HeroCityDTO;
 import com.example.superheltev4.dto.HeroPowerCountDTO;
 import com.example.superheltev4.dto.HeroPowerDTO;
 import com.example.superheltev4.model.Superhero;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-@Repository
+@Repository("superhero_db")
 public class SuperheroRepository_DB implements ISuperheltRepository{
     /* metode fungerer ikke, kan ikke lokalisere i drivermanager.
     @Value("${spring.datasource.url}")
@@ -46,7 +43,7 @@ public class SuperheroRepository_DB implements ISuperheltRepository{
     }
 
     // superhero search
-    public List<Superhero> getSuperhero(String name) {
+    public List<Superhero> getSuperheroByName(String name) {
         ArrayList<Superhero> allSuperheroes = (ArrayList<Superhero>) this.getAllSuperheroes();
         ArrayList<Superhero> superheroes = new ArrayList<>();
         for (Superhero superhero: allSuperheroes) {
@@ -101,10 +98,10 @@ public class SuperheroRepository_DB implements ISuperheltRepository{
     public List<HeroPowerDTO> getSuperheroesWithPowers() {
         List<HeroPowerDTO> superheroes = new ArrayList<>();
         try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/superheroes","root","Qhr96wmr2k")) {
-            String SQL = "SELECT s.superheroname, s.realname, GROUP_CONCAT(sp.powername) AS superpowers" +
-                    "FROM superhero s" +
-                    "LEFT JOIN superhero_power shp ON s.superheroname = shp.superheroname" +
-                    "LEFT JOIN superpower sp ON shp.powerID = sp.superpowerID" +
+            String SQL = "SELECT s.superheroname, s.realname, GROUP_CONCAT(sp.powername) AS superpowers " +
+                    "FROM superhero s " +
+                    "LEFT JOIN superhero_power shp ON s.superheroname = shp.superheroname " +
+                    "LEFT JOIN superpower sp ON shp.powerID = sp.superpowerID " +
                     "GROUP BY s.superheroname, s.realname;";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(SQL);
@@ -182,15 +179,5 @@ public class SuperheroRepository_DB implements ISuperheltRepository{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public List<Superhero> getAll() {
-        return null;
-    }
-
-    @Override
-    public void addSuperhelt(Superhero superhero) {
-
     }
 }
