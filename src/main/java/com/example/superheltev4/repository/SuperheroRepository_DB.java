@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class SuperheroRepository_DB {
+public class SuperheroRepository_DB implements ISuperheltRepository{
     /* metode fungerer ikke, kan ikke lokalisere i drivermanager.
     @Value("${spring.datasource.url}")
     private String db_url;
@@ -26,6 +26,7 @@ public class SuperheroRepository_DB {
     @Value("${spring.datasource.password}")
     private String pwd;
 */
+
 
     // En superhelt med et bestemt heroName eller en liste med alle superhelte, der indeholder:
     //heroName, realName og creationYear
@@ -42,6 +43,18 @@ public class SuperheroRepository_DB {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // superhero search
+    public List<Superhero> getSuperhero(String name) {
+        ArrayList<Superhero> allSuperheroes = (ArrayList<Superhero>) this.getAllSuperheroes();
+        ArrayList<Superhero> superheroes = new ArrayList<>();
+        for (Superhero superhero: allSuperheroes) {
+            if (superhero.getName().toLowerCase().contains(name.toLowerCase())) {
+                superheroes.add(superhero);
+            }
+        }
+        return superheroes;
     }
 
     //En superhelt med et bestemt heroName eller en liste med alle superhelte, der indeholder:
@@ -62,6 +75,7 @@ public class SuperheroRepository_DB {
             throw new RuntimeException(e);
         }
     }
+
     public List<HeroPowerCountDTO> getSuperheroesWithNumPowersID(String name) {
         List<HeroPowerCountDTO> superheroes = new ArrayList<>();
         try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/superheroes","root","Qhr96wmr2k")) {
@@ -83,13 +97,14 @@ public class SuperheroRepository_DB {
 
     //En superhelt med et bestemt heroName eller en liste med alle superhelte, der indeholder:
     //heroName, realName, superkræfter (Superpower)
+
     public List<HeroPowerDTO> getSuperheroesWithPowers() {
         List<HeroPowerDTO> superheroes = new ArrayList<>();
         try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/superheroes","root","Qhr96wmr2k")) {
-            String SQL = "SELECT s.superheroname, s.realname, GROUP_CONCAT(sp.powername) AS superpowers\n" +
-                    "FROM superhero s\n" +
-                    "LEFT JOIN superhero_power shp ON s.superheroname = shp.superheroname\n" +
-                    "LEFT JOIN superpower sp ON shp.powerID = sp.superpowerID\n" +
+            String SQL = "SELECT s.superheroname, s.realname, GROUP_CONCAT(sp.powername) AS superpowers" +
+                    "FROM superhero s" +
+                    "LEFT JOIN superhero_power shp ON s.superheroname = shp.superheroname" +
+                    "LEFT JOIN superpower sp ON shp.powerID = sp.superpowerID" +
                     "GROUP BY s.superheroname, s.realname;";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(SQL);
@@ -129,8 +144,8 @@ public class SuperheroRepository_DB {
         }
     }
 
-
     //En superhelt med et bestemt heroName eller en liste med alle superhelte, der indeholder: heroName og by (City)
+
     public List<HeroCityDTO> getSuperheroesWithCity() {
         List<HeroCityDTO> superheroes = new ArrayList<>();
         try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/superheroes","root","Qhr96wmr2k")) {
@@ -149,14 +164,33 @@ public class SuperheroRepository_DB {
         }
     }
 
-    public List<Superhero> getSuperhero(String name) {
-        ArrayList<Superhero> allSuperheroes = (ArrayList<Superhero>) this.getAllSuperheroes();
-        ArrayList<Superhero> superheroes = new ArrayList<>();
-        for (Superhero superhero: allSuperheroes) {
-            if (superhero.getName().toLowerCase().contains(name.toLowerCase())) {
-                superheroes.add(superhero);
+    public List<HeroCityDTO> getSuperheroWithCityID(String input) {
+        List<HeroCityDTO> superheroes = new ArrayList<>();
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/superheroes", "root", "Qhr96wmr2k")) {
+            String SQL = "SELECT s.superheroname, c.cityname " +
+                    "FROM superhero s " +
+                    "LEFT JOIN city c ON s.cityid = c.cityid " +
+                    "WHERE c.cityname LIKE ? " +
+                    "GROUP BY s.superheroname";
+            PreparedStatement ps = con.prepareStatement(SQL);
+            ps.setString(1, "%" + input + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                superheroes.add(new HeroCityDTO(rs.getString("superheroname"), rs.getString("cityname")));
             }
+            return superheroes;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return superheroes;
+    }
+
+    @Override
+    public List<Superhero> getAll() {
+        return null;
+    }
+
+    @Override
+    public void addSuperhelt(Superhero superhero) {
+
     }
 }

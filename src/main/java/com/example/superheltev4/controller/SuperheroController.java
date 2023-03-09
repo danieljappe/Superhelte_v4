@@ -69,4 +69,10 @@ public class SuperheroController {
         List<HeroCityDTO> superheroList = superheroRepository_DB.getSuperheroesWithCity();
         return new ResponseEntity<>(superheroList, HttpStatus.OK);
     }
+
+    @GetMapping("/city/{navn}")
+    public ResponseEntity<List<HeroCityDTO>> getSuperheroesWithCityID(@PathVariable String navn){
+        List<HeroCityDTO> superheroList = superheroRepository_DB.getSuperheroWithCityID(navn);
+        return new ResponseEntity<>(superheroList, HttpStatus.OK);
+    }
 }
