@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,60 +28,69 @@ public class SuperheroController {
         superheltRepository = (ISuperheltRepository) context.getBean(impl);
     }
 
-    @GetMapping("")
-    public ResponseEntity<List<Superhero>> getAllSuperheroes() {
-        List<Superhero> superheroList = superheltRepository.getAllSuperheroes();
-        return new ResponseEntity<>(superheroList, HttpStatus.OK);
-    }
 
     //En superhelt med et bestemt heroName eller en liste med alle superhelte, der indeholder:
     //heroName, realName og creationYear
+    @GetMapping("")
+    String getPeople(Model model){
+        List<Superhero> superheroList = superheltRepository.getAllSuperheroes();
+        model.addAttribute("people", superheroList);
+        return "superheroHTML";
+    }
 
     @GetMapping("/{navn}")
-    public ResponseEntity<List<Superhero>> getSuperhero(@PathVariable String navn) {
+    public String getSuperhero(Model model,@PathVariable String navn) {
         List<Superhero> superheroList = superheltRepository.getSuperheroByName(navn);
-        return new ResponseEntity<>(superheroList, HttpStatus.OK);
+        model.addAttribute("people", superheroList);
+        return "superheroHTML";
     }
 
     //En superhelt med et bestemt heroName eller en liste med alle superhelte, der indeholder:
     //heroName, realName og antallet af superkræfter (Superpower)
     @GetMapping("/superpower/count")
-    public ResponseEntity<List<HeroPowerCountDTO>> getSuperheroes_num_powers(){
+    public String getSuperheroes_num_powers(Model model){
         List<HeroPowerCountDTO> superheroList = superheltRepository.getSuperheroesWithNumPowers();
-        return new ResponseEntity<>(superheroList, HttpStatus.OK);
+        model.addAttribute("peoplecount", superheroList);
+        return "superheroCountHTML";
     }
+
 
     //Med navn
     @GetMapping("/superpower/count/{navn}")
-    public ResponseEntity<List<HeroPowerCountDTO>> getSuperheroes_num_powers(@PathVariable String navn){
+    public String getSuperheroes_num_powers(Model model,@PathVariable String navn){
         List<HeroPowerCountDTO> superheroList = superheltRepository.getSuperheroesWithNumPowersID(navn);
-        return new ResponseEntity<>(superheroList, HttpStatus.OK);
+        model.addAttribute("peoplecount", superheroList);
+        return "superheroCountHTML";
     }
 
     //En superhelt med et bestemt heroName eller en liste med alle superhelte, der indeholder:
     //heroName, realName, superkræfter (Superpower)
     @GetMapping("/superpower")
-    public ResponseEntity<List<HeroPowerDTO>> getSuperheroes(){
+    public String getSuperheroes(Model model){
         List<HeroPowerDTO> superheroList = superheltRepository.getSuperheroesWithPowers();
-        return new ResponseEntity<>(superheroList, HttpStatus.OK);
+        model.addAttribute("peoplepower", superheroList);
+        return "superheroPowerHTML";
     }
 
     // Med navn
     @GetMapping("/superpower/{navn}")
-    public ResponseEntity<List<HeroPowerDTO>> getSuperheroesID(@PathVariable String navn){
+    public String getSuperheroesID(Model model,@PathVariable String navn){
         List<HeroPowerDTO> superheroList = superheltRepository.getSuperheroesWithPowersID(navn);
-        return new ResponseEntity<>(superheroList, HttpStatus.OK);
+        model.addAttribute("peoplepower", superheroList);
+        return "superheroPowerHTML";
     }
 
     @GetMapping("/city")
-    public ResponseEntity<List<HeroCityDTO>> getSuperheroesWithCity(){
+    public String getSuperheroesWithCity(Model model){
         List<HeroCityDTO> superheroList = superheltRepository.getSuperheroesWithCity();
-        return new ResponseEntity<>(superheroList, HttpStatus.OK);
+        model.addAttribute("peoplecity", superheroList);
+        return "superheroCityHTML";
     }
 
     @GetMapping("/city/{navn}")
-    public ResponseEntity<List<HeroCityDTO>> getSuperheroesWithCityID(@PathVariable String navn){
+    public String getSuperheroesWithCityID(Model model, @PathVariable String navn){
         List<HeroCityDTO> superheroList = superheltRepository   .getSuperheroWithCityID(navn);
-        return new ResponseEntity<>(superheroList, HttpStatus.OK);
+        model.addAttribute("peoplecity", superheroList);
+        return "superheroCityHTML";
     }
 }
